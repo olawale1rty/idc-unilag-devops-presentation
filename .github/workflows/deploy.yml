@@ -1,0 +1,32 @@
+name: Build and Deploy to Digital Ocean
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY}}
+          username: ${{ secrets.SSH_USERNAME}}
+          # passphrase: ${{ secrets.PASSPHRASE}}
+          script: |
+            /bin/bash /root/app/pull.sh
